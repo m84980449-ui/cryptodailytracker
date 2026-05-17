@@ -7,11 +7,62 @@
 <meta name="description" content="Free crypto trading calculators: position size with leverage, Binance fee calculator, and profit/loss calculator. No signup required."/>
 <link rel="canonical" href="https://nassr-nasr.github.io/crypto-tools/"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#080C14;--card:#0F1520;--border:#1A2540;--accent:#00D4FF;--accent2:#7B2FFF;--text:#E2E8F0;--muted:#6B7A99}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+:root{--bg:#080C14;--card:#0F1520;--border:#1A2540;--accent:#00D4FF;--accent2:#7B2FFF;--text:#E2E8F0;--muted:#6B7A99;--success:#00ff88;--danger:#ff3366}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:40px;}
+
+/* Live Price Ticker */
+.price-ticker-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: #0b0f19;
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  backdrop-filter: blur(10px);
+}
+.ticker-content {
+  display: flex;
+  white-space: nowrap;
+  animation: ticker-move 35s linear infinite;
+}
+.ticker-content:hover {
+  animation-play-state: paused;
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 3rem;
+}
+.ticker-symbol {
+  color: #fff;
+  font-weight: 700;
+}
+.ticker-price {
+  color: var(--accent);
+  font-weight: 700;
+}
+.ticker-change {
+  font-size: 0.7rem;
+}
+.ticker-change.up { color: var(--success); }
+.ticker-change.down { color: var(--danger); }
+
+@keyframes ticker-move {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 .hero{padding:5rem 2rem 3rem;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,0.07) 0%,transparent 70%)}
 .hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.1;margin-bottom:1rem}
 .grad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -32,6 +83,24 @@ footer{text-align:center;padding:2rem;color:var(--muted);font-size:0.8rem;border
 </style>
 </head>
 <body>
+
+<!-- Live Price Ticker -->
+<div class="price-ticker-bar">
+  <div class="ticker-content">
+    <div class="ticker-item"><span class="ticker-symbol">BTC/USDT</span><span class="ticker-price" id="price-BTC">$--,--</span><span class="ticker-change" id="change-BTC">--%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">ETH/USDT</span><span class="ticker-price" id="price-ETH">$--,--</span><span class="ticker-change" id="change-ETH">--%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">BNB/USDT</span><span class="ticker-price" id="price-BNB">$--,--</span><span class="ticker-change" id="change-BNB">--%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">SOL/USDT</span><span class="ticker-price" id="price-SOL">$--,--</span><span class="ticker-change" id="change-SOL">--%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">ADA/USDT</span><span class="ticker-price" id="price-ADA">$--,--</span><span class="ticker-change" id="change-ADA">--%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">XRP/USDT</span><span class="ticker-price" id="price-XRP">$--,--</span><span class="ticker-change" id="change-XRP">--%</span></div>
+    <!-- Duplicate for infinite seamless scroll -->
+    <div class="ticker-item"><span class="ticker-symbol">BTC/USDT</span><span class="ticker-price" id="price-BTC-dup">$--,--</span><span class="ticker-change" id="change-BTC-dup">--%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">ETH/USDT</span><span class="ticker-price" id="price-ETH-dup">$--,--</span><span class="ticker-change" id="change-ETH-dup">--%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">BNB/USDT</span><span class="ticker-price" id="price-BNB-dup">$--,--</span><span class="ticker-change" id="change-BNB-dup">--%</span></div>
+    <div class="ticker-item"><span class="ticker-symbol">SOL/USDT</span><span class="ticker-price" id="price-SOL-dup">$--,--</span><span class="ticker-change" id="change-SOL-dup">--%</span></div>
+  </div>
+</div>
+
 <section class="hero">
   <h1>Free <span class="grad">Crypto Trading</span><br/>Calculators</h1>
   <p>Professional-grade tools used by active traders. Calculate your position size, Binance fees, and P&L instantly — no account needed.</p>
@@ -69,5 +138,48 @@ footer{text-align:center;padding:2rem;color:var(--muted);font-size:0.8rem;border
 <footer>
   <p>© 2026 CryptoTradingTools.io — For educational purposes. Always manage your risk.</p>
 </footer>
+
+<script>
+  async function updatePrices() {
+    try {
+      const res = await fetch("https://api.binance.com/api/v3/ticker/24hr");
+      const data = await res.json();
+      
+      const targets = ["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "ADAUSDT", "XRPUSDT"];
+      
+      data.forEach(item => {
+        if (targets.includes(item.symbol)) {
+          const sym = item.symbol.replace("USDT", "");
+          const price = parseFloat(item.lastPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          const change = parseFloat(item.priceChangePercent);
+          
+          const priceEl = document.getElementById(`price-${sym}`);
+          const changeEl = document.getElementById(`change-${sym}`);
+          
+          if (priceEl && changeEl) {
+            priceEl.innerHTML = `$${price}`;
+            changeEl.innerHTML = `${change >= 0 ? "+" : ""}${change.toFixed(2)}%`;
+            changeEl.className = `ticker-change ${change >= 0 ? "up" : "down"}`;
+            
+            const dupPrice = document.getElementById(`price-${sym}-dup`);
+            const dupChange = document.getElementById(`change-${sym}-dup`);
+            if (dupPrice && dupChange) {
+              dupPrice.innerHTML = `$${price}`;
+              dupChange.innerHTML = `${change >= 0 ? "+" : ""}${change.toFixed(2)}%`;
+              dupChange.className = `ticker-change ${change >= 0 ? "up" : "down"}`;
+            }
+          }
+        }
+      });
+    } catch (e) {
+      console.warn("Ticker prices failed to load.");
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    updatePrices();
+    setInterval(updatePrices, 15000); // Update every 15 seconds
+  });
+</script>
 </body>
 </html>
